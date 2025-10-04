@@ -1,62 +1,114 @@
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>T-EKMA</title>
+    <!-- Plotly.js for charting -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- PapaParse for CSV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #controls { margin-bottom: 20px; }
+        #plot { width: 900px; height: 600px; margin: auto; }
+        .input-group { margin-bottom: 10px; }
+    </style>
 </head>
 <body>
-    <h2>T-EKMA diagram</h2>
-    <p>请输入一个数据点（Y值），将显示在背景曲线上：</p>
-    <input type="number" id="userInput" placeholder="输入你的数据点">
-    <button onclick="plotUserPoint()">显示数据点</button>
-
-    <div id="plot" style="width:800px;height:500px;"></div>
+    <h2>T-EKMA Diagram</h2>
+    <div id="controls">
+        <div class="input-group">
+            <label for="userX">X值：</label>
+            <input type="number" id="userX" placeholder="请输入X值">
+            <label for="userY">Y值：</label>
+            <input type="number" id="userY" placeholder="请输入Y值">
+            <button onclick="plotUserPoint()">显示数据点</button>
+        </div>
+        <p>手动输入X,Y坐标，点击“显示数据点”即可在曲线图上显示。</p>
+    </div>
+    <div id="plot"></div>
 
     <script>
-        // 背景曲线数据（示例：y = x^2）
-        let xValues = [];
-        let yValues = [];
-        for (let x = -10; x <= 10; x += 0.5) {
-            xValues.push(x);
-            yValues.push(x * x);
-        }
+    // 颜色序列（20种HSL色相分布，可扩展）
+    function getColor(idx, total) {
+        return `hsl(${Math.round(360 * idx / total)}, 65%, 55%)`;
+    }
 
-        // 初始图表
-        let backgroundTrace = {
-            x: xValues,
-            y: yValues,
-            mode: 'lines',
-            name: '背景曲线 y = x²',
-            line: {color: 'blue'}
-        };
+    // 用户数据点数组
+    let userPoints = [];
 
-        let userTrace = {
-            x: [],
-            y: [],
-            mode: 'markers',
-            name: '你的数据点',
-            marker: {color: 'red', size: 10}
-        };
-
-        let layout = {
-            title: '背景曲线与用户数据点比较',
-            xaxis: {title: 'X'},
-            yaxis: {title: 'Y'}
-        };
-
-        Plotly.newPlot('plot', [backgroundTrace, userTrace], layout);
-
-        // 用户输入数据点并更新图表
-        function plotUserPoint() {
-            let y = parseFloat(document.getElementById('userInput').value);
-            if (!isNaN(y)) {
-                let closestX = xValues.reduce((prev, curr) => Math.abs(curr - Math.sqrt(y)) < Math.abs(prev - Math.sqrt(y)) ? curr : prev);
-                userTrace.x = [closestX];
-                userTrace.y = [y];
-                Plotly.react('plot', [backgroundTrace, userTrace], layout);
+    // 读取CSV并画线
+    function loadAndDrawCurves() {
+        // 相对路径
+        Papa.parse('data/TEKMADATA.CSV', {
+            download: true,
+            header: true,
+            dynamicTyping: true,
+            complete: function(results) {
+                const data = results.data;
+                const columns = results.meta.fields;
+                // 查找所有曲线列名对（AX, AY...）
+                let curveNames = [];
+                for (let i = 0; i < columns.length; i += 2) {
+                    if (columns[i + 1]) {
+                        curveNames.push([columns[i], columns[i + 1]]);
+                    }
+                }
+                let traces = [];
+                for (let k = 0; k < curveNames.length; k++) {
+                    let colX = curveNames[k][0];
+                    let colY = curveNames[k][1];
+                    let xArr = [];
+                    let yArr = [];
+                    for (let i = 0; i < data.length; i++) {
+                        let x = data[i][colX];
+                        let y = data[i][colY];
+                        if (typeof x === "number" && typeof y === "number" && !isNaN(x) && !isNaN(y)) {
+                            xArr.push(x);
+                            yArr.push(y);
+                        }
+                    }
+                    traces.push({
+                        x: xArr,
+                        y: yArr,
+                        mode: 'lines',
+                        name: `${colX.replace('X','')}`,
+                        line: { color: getColor(k, curveNames.length), width: 2 }
+                    });
+                }
+                // 加入用户点trace
+                traces.push({
+                    x: userPoints.map(p => p.x),
+                    y: userPoints.map(p => p.y),
+                    mode: 'markers',
+                    name: '你输入的数据点',
+                    marker: { color: 'red', size: 12, symbol: 'diamond' }
+                });
+                let layout = {
+                    title: 'T-EKMA曲线与用户数据点',
+                    xaxis: {title: 'X', gridcolor: '#eee'},
+                    yaxis: {title: 'Y', gridcolor: '#eee'},
+                    legend: { orientation: "h", x: 0, y: 1.08 },
+                    plot_bgcolor: "#fafafa"
+                };
+                Plotly.newPlot('plot', traces, layout, {responsive:true});
             }
+        });
+    }
+
+    // 用户点输入并显示
+    function plotUserPoint() {
+        let x = parseFloat(document.getElementById('userX').value);
+        let y = parseFloat(document.getElementById('userY').value);
+        if (!isNaN(x) && !isNaN(y)) {
+            userPoints.push({x: x, y: y});
+            loadAndDrawCurves();
+        } else {
+            alert("请输入有效的X和Y值！");
         }
+    }
+
+    // 首次加载
+    loadAndDrawCurves();
     </script>
 </body>
 </html>
