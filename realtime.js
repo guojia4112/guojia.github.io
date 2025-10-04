@@ -1,49 +1,45 @@
-// 定义你要获取的站点英文名
+// 只获取这两个站点的最新一小时 NO2/O3 数据
 const targetSites = ["Sham Shui Po", "Mong Kok"];
 
-// 加点到主图的函数（假定你已在 index.html 定义了 userPoints 和 loadAndDrawCurves）
+// 清理自动点
+function clearAutoPoints() {
+    if (window.userPoints) {
+        window.userPoints = window.userPoints.filter(p => !p.auto);
+    }
+}
+
+// 添加点到主图
 function addRealtimePoint(x, y, site) {
     if (window.userPoints && typeof window.loadAndDrawCurves === 'function') {
-        window.userPoints.push({x: x, y: y, site: site});
+        window.userPoints.push({x: x, y: y, site: site, auto: true});
         window.loadAndDrawCurves();
     }
 }
 
-// 动态加载数据JS
-function fetchLatestNO2O3() {
-    // 先清除之前自动添加的点（只保留手动输入的点）
-    if (window.userPoints) {
-        window.userPoints = window.userPoints.filter(p => !p.auto); // 只保留没有auto属性的点
-    }
-    // 加载并处理数据
-    var script = document.createElement('script');
-    script.src = 'https://www.aqhi.gov.hk/js/data/past_24_pollutant.js';
-    script.onload = function() {
-        // station_24_data 是 global变量，结构如 [[{},{}...], ...]
-        if (window.station_24_data) {
-            for (let stationData of station_24_data) {
-                // 每个 stationData 是一个站点的数组
-                const latest = stationData[0]; // 第一个是最新一小时
-                if (!latest || !latest.StationNameEN) continue;
-                if (targetSites.includes(latest.StationNameEN)) {
-                    const no2 = parseFloat(latest.NO2);
-                    const o3  = parseFloat(latest.O3);
-                    if (!isNaN(no2) && !isNaN(o3)) {
-                        // 标记自动点，方便后续清理
-                        window.userPoints.push({x: no2, y: o3, site: latest.StationNameEN, auto: true});
-                    }
+// 主函数：读取本地 past_24_pollutant.js 数据
+function fetchLatestNO2O3Local() {
+    clearAutoPoints();
+
+    // 确认 station_24_data 已加载（由 <script src="data/past_24_pollutant.js"> 加载）
+    if (window.station_24_data) {
+        for (let stationData of station_24_data) {
+            const latest = stationData[0]; // 最新一小时数据
+            if (!latest || !latest.StationNameEN) continue;
+            if (targetSites.includes(latest.StationNameEN)) {
+                const no2 = parseFloat(latest.NO2);
+                const o3  = parseFloat(latest.O3);
+                if (!isNaN(no2) && !isNaN(o3)) {
+                    addRealtimePoint(no2, o3, latest.StationNameEN);
                 }
             }
-            window.loadAndDrawCurves();
-        } else {
-            console.log("station_24_data not defined!");
         }
-    };
-    document.head.appendChild(script);
+    } else {
+        console.log("station_24_data not loaded! 请确保已在 index.html 先加载数据文件。");
+    }
 }
 
-// 页面加载时自动获取一次
-fetchLatestNO2O3();
+// 页面加载后自动运行
+fetchLatestNO2O3Local();
 
-// 如果你要定时刷新实时数据，可取消注释下面一行：
-// setInterval(fetchLatestNO2O3, 10 * 60 * 1000); // 每10分钟自动刷新
+// 如需定时刷新，则可加：
+// setInterval(fetchLatestNO2O3Local, 10 * 60 * 1000);
