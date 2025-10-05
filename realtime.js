@@ -5,8 +5,6 @@ const targetStations = ["66", "81"]; // 66: Sham Shui Po, 81: Mong Kok
 function getCurrentHourString() {
     const now = new Date();
     now.setMinutes(0, 0, 0); // 舍去分钟和秒
-    // 数据文件时间格式是 "YYYY-MM-DD HH:00:00"
-    // 需要处理时区（假设服务器用UTC+8香港时间，如果你的代码环境为本地香港时间即可直接用）
     const yyyy = now.getFullYear();
     const mm = String(now.getMonth() + 1).padStart(2, '0');
     const dd = String(now.getDate()).padStart(2, '0');
@@ -16,6 +14,8 @@ function getCurrentHourString() {
 
 // 在T-EKMA主图上添加点的函数（假设你已有userPoints和loadAndDrawCurves）
 function addRealtimePoint(x, y, site, time) {
+    // 调试输出：可在Console面板看到实际提取的点
+    console.log(`自动点：站点=${site}, 时间=${time}, NO2=${x}, O3=${y}`);
     if (window.userPoints && typeof window.loadAndDrawCurves === 'function') {
         window.userPoints.push({x: x, y: y, site: site, time: time, auto: true});
         window.loadAndDrawCurves();
