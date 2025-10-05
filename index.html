@@ -110,8 +110,16 @@
     // 首次加载
     loadAndDrawCurves();
     </script>
-    <script src="data/past_24_pollutant.js"></script>
-    <script src="realtime.js"></script>
+
+<!-- 加载污染物数据 -->
+    data/past_24_pollutant.js</script>
+    <script>
+      window.station_24_data = station_24_data; // 挂载到 window
+    </script>
+
+    <!-- 加载自动标注点的脚本 -->
+    realtime.js</script>
+
 </body>
 </html>
 
