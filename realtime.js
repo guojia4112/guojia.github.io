@@ -1,36 +1,42 @@
+// 确保页面加载后执行
+document.addEventListener("DOMContentLoaded", function () {
+    // 图表容器 ID
+    const plotDiv = document.getElementById('plot');
 
-// Ensure station_24_data is available
-if (!window.station_24_data) {
-  console.error("station_24_data not loaded!");
-} else {
-  // Flatten the 2D array
-  const flatData = station_24_data.flat();
+    // 初始化图表（如果已有曲线，可以保留）
+    const layout = {
+        title: 'NOX vs O3 with Site Labels',
+        xaxis: { title: 'NOX' },
+        yaxis: { title: 'O3' }
+    };
 
-  // Filter for StationID = "66"
-  const station66Data = flatData.filter(entry => entry.StationID === "66");
+    Plotly.newPlot(plotDiv, [], layout);
 
-  if (station66Data.length === 0) {
-    console.warn("No data found for StationID 66.");
-  } else {
-    // Sort by DateTime descending to get the most recent
-    station66Data.sort((a, b) => new Date(b.DateTime) - new Date(a.DateTime));
-    const latest = station66Data[0];
+    // 使用 PapaParse 读取 CSV 文件
+    Papa.parse("NOXO3.csv", {
+        download: true,
+        header: true,
+        complete: function (results) {
+            const data = results.data;
 
-    // Parse NO2 and O3 values
-    const x = parseFloat(latest.NO2);
-    const y = parseFloat(latest.O3);
+            // 提取三列数据
+            const xValues = data.map(row => parseFloat(row.NOX));
+            const yValues = data.map(row => parseFloat(row.O3));
+            const siteNames = data.map(row => row.site);
 
-    if (!isNaN(x) && !isNaN(y)) {
-      console.log(`自动点：站点=66, 时间=${latest.DateTime}, NO2=${x}, O3=${y}`);
-      // Add to userPoints and replot
-      if (typeof userPoints !== 'undefined') {
-        userPoints.push({x: x, y: y});
-        loadAndDrawCurves();
-      } else {
-        console.error("userPoints array not defined.");
-      }
-    } else {
-      console.error("NO2 or O3 value is invalid.");
-    }
-  }
-}
+            // 创建散点图 trace
+            const scatterTrace = {
+                x: xValues,
+                y: yValues,
+                mode: 'markers+text',
+                type: 'scatter',
+                text: siteNames, // 显示站点名称
+                textposition: 'top center',
+                marker: { color: 'blue', size: 10 }
+            };
+
+            // 添加到图表
+            Plotly.addTraces(plotDiv, scatterTrace);
+        }
+    });
+});
