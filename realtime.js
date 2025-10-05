@@ -1,45 +1,66 @@
-// 只获取这两个站点的最新一小时 NO2/O3 数据
-const targetSites = ["Sham Shui Po", "Mong Kok"];
+// 站点序号定义
+const targetStations = ["66", "81"]; // 66: Sham Shui Po, 81: Mong Kok
 
-// 清理自动点
-function clearAutoPoints() {
-    if (window.userPoints) {
-        window.userPoints = window.userPoints.filter(p => !p.auto);
-    }
+// 获取当前时间最近的整点（与数据文件格式保持一致，精确到小时）
+function getCurrentHourString() {
+    const now = new Date();
+    now.setMinutes(0, 0, 0); // 舍去分钟和秒
+    // 数据文件时间格式是 "YYYY-MM-DD HH:00:00"
+    // 需要处理时区（假设服务器用UTC+8香港时间，如果你的代码环境为本地香港时间即可直接用）
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd} ${hh}:00:00`;
 }
 
-// 添加点到主图
-function addRealtimePoint(x, y, site) {
+// 在T-EKMA主图上添加点的函数（假设你已有userPoints和loadAndDrawCurves）
+function addRealtimePoint(x, y, site, time) {
     if (window.userPoints && typeof window.loadAndDrawCurves === 'function') {
-        window.userPoints.push({x: x, y: y, site: site, auto: true});
+        window.userPoints.push({x: x, y: y, site: site, time: time, auto: true});
         window.loadAndDrawCurves();
     }
 }
 
-// 主函数：读取本地 past_24_pollutant.js 数据
-function fetchLatestNO2O3Local() {
-    clearAutoPoints();
+// 主函数：提取66和81号站点最近小时的数据
+function fetchLatestNO2O3_TEKMA() {
+    if (!window.station_24_data) {
+        console.error("station_24_data not loaded!");
+        return;
+    }
+    // 获取当前整点时间字符串
+    const targetTime = getCurrentHourString();
 
-    // 确认 station_24_data 已加载（由 <script src="data/past_24_pollutant.js"> 加载）
-    if (window.station_24_data) {
-        for (let stationData of station_24_data) {
-            const latest = stationData[0]; // 最新一小时数据
-            if (!latest || !latest.StationNameEN) continue;
-            if (targetSites.includes(latest.StationNameEN)) {
-                const no2 = parseFloat(latest.NO2);
-                const o3  = parseFloat(latest.O3);
-                if (!isNaN(no2) && !isNaN(o3)) {
-                    addRealtimePoint(no2, o3, latest.StationNameEN);
-                }
+    // 遍历所有站点
+    for (const siteDataArr of station_24_data) {
+        // 只处理目标站点
+        if (siteDataArr.length === 0 || !targetStations.includes(siteDataArr[0].StationID)) continue;
+
+        // 在该站点的所有小时数据中找出最接近当前小时的那一条
+        let minDelta = Infinity, bestEntry = null;
+        for (const entry of siteDataArr) {
+            if (entry.NO2 === "-" || entry.O3 === "-") continue; // 排除无效数据
+            // 解析时间为Date对象
+            const entryTime = new Date(entry.DateTime.replace(" ", "T") + "+08:00"); // 强制香港时区
+            const now = new Date();
+            const delta = Math.abs(entryTime.getTime() - now.getTime());
+            if (delta < minDelta) {
+                minDelta = delta;
+                bestEntry = entry;
             }
         }
-    } else {
-        console.log("station_24_data not loaded! 请确保已在 index.html 先加载数据文件。");
+        if (bestEntry) {
+            const x = parseFloat(bestEntry.NO2);
+            const y = parseFloat(bestEntry.O3);
+            const siteName = bestEntry.StationNameEN;
+            const timeStr = bestEntry.DateTime;
+            addRealtimePoint(x, y, siteName, timeStr);
+        }
     }
 }
 
-// 页面加载后自动运行
-fetchLatestNO2O3Local();
+// 自动执行一次
+fetchLatestNO2O3_TEKMA();
 
-// 如需定时刷新，则可加：
-// setInterval(fetchLatestNO2O3Local, 10 * 60 * 1000);
+// 如需定时刷新自动点，可取消注释：
+// setInterval(fetchLatestNO2O3_TEKMA, 10 * 60 * 1000);
