@@ -1,44 +1,200 @@
+<!--  (c) 2026 GUO Jia. All rights reserved.
+  Proprietary and confidential. Unauthorized copying, modification, distribution is strictly prohibited.-->
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-    
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XL969VLM9T"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-XL969VLM9T');
-</script>
-    
-    
-    <title>T-EKMA</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        #controls { margin-bottom: 20px; }
-        #plot { width: 900px; height: 600px; margin: auto; }
-        .input-group { margin-bottom: 10px; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trans-EKMA Hong Kong — Diagnostic, Evolution & Policy Sandbox</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h2>T-EKMA Diagram</h2>
-    <div id="controls">
-        <div class="input-group">
-            <label for="userX">X值：</label>
-            <input type="number" id="userX" placeholder="请输入X值">
-            <label for="userY">Y值：</label>
-            <input type="number" id="userY" placeholder="请输入Y值">
-            <button onclick="plotUserPoint()">显示数据点</button>
-        </div>
-        <p>手动输入X,Y坐标，点击“显示数据点”即可在曲线图上显示。</p>
-    </div>
-    <div id="plot"></div>
+  <header>
+    <h1>Trans‑EKMA Hong Kong</h1>
+    <p>O₃–NOₓ–VOC Regime Diagnosis • Site Evolution • Policy Sandbox</p>
+  </header>
 
-    <!-- 引入整合版脚本 -->
-    <script src="realtime.js"></script>
+  <nav>
+    <button onclick="showPage('diagram')">Trans‑EKMA Diagram</button>
+    <button onclick="showPage('evolution')">Site Evolution</button>
+    <button onclick="showPage('sandbox')">Policy Sandbox</button>
+    <button onclick="showPage('method')">Method</button>
+  </nav>
+
+  <main>
+    <!-- ===================== Trans‑EKMA Diagnostic Diagram ===================== -->
+    <section id="diagram" class="page active">
+      <h2>Trans‑EKMA Diagnostic Diagram</h2>
+      <div class="controls-row">
+        <label>Monitoring Sites (multi‑select):
+          <select id="siteSelect" multiple size="6">
+            <option value="HK_AVE">HK S.A.R.</option>
+            <option value="CAUSEWAY_BAY">Causeway Bay</option>
+            <option value="CENTRAL">Central</option>
+            <option value="CENTRAL_WESTERN">Central Western</option>
+            <option value="KWAI_CHUNG">Kwai Chung</option>
+            <option value="KWUN_TONG">Kwun Tong</option>
+            <option value="MONG_KOK">Mong Kok</option>
+            <option value="NORTH">North</option>
+            <option value="SHAM_SHUI_PO">Sham Shui Po</option>
+            <option value="SHATIN">Shatin</option>
+            <option value="SOUTHERN">Southern</option>
+            <option value="TAI_PO">Tai Po</option>
+            <option value="TAP_MUN">Tap Mun</option>
+            <option value="TSEUNG_KWAN_O">Tseung Kwan O</option>
+            <option value="TSUEN_WAN">Tsuen Wan</option>
+            <option value="TUEN_MUN">Tuen Mun</option>
+            <option value="TUNG_CHUNG">Tung Chung</option>
+            <option value="YUEN_LONG">Yuen Long</option>
+          </select>
+        </label>
+        <label style="margin-left: 12px;">Year:
+          <input id="yearRange" type="range" min="1990" max="2024" value="2020" />
+          <span id="yearVal">2020</span>
+        </label>
+      </div>
+      <div id="plot" class="placeholder">Trans‑EKMA background & selected sites will display here.</div>
+    </section>
+
+    <!-- ===================== Site Evolution ===================== -->
+    <section id="evolution" class="page">
+      <h2>Site Evolution Analysis</h2>
+      <div class="controls-row">
+        <label>Sites (multi‑select):
+          <select id="evoSiteSelect" multiple size="6">
+            <option value="HK_AVE">HK S.A.R.</option>
+            <option value="CAUSEWAY_BAY">Causeway Bay</option>
+            <option value="CENTRAL">Central</option>
+            <option value="CENTRAL_WESTERN">Central Western</option>
+            <option value="KWAI_CHUNG">Kwai Chung</option>
+            <option value="KWUN_TONG">Kwun Tong</option>
+            <option value="MONG_KOK">Mong Kok</option>
+            <option value="NORTH">North</option>
+            <option value="SHAM_SHUI_PO">Sham Shui Po</option>
+            <option value="SHATIN">Shatin</option>
+            <option value="SOUTHERN">Southern</option>
+            <option value="TAI_PO">Tai Po</option>
+            <option value="TAP_MUN">Tap Mun</option>
+            <option value="TSEUNG_KWAN_O">Tseung Kwan O</option>
+            <option value="TSUEN_WAN">Tsuen Wan</option>
+            <option value="TUEN_MUN">Tuen Mun</option>
+            <option value="TUNG_CHUNG">Tung Chung</option>
+            <option value="YUEN_LONG">Yuen Long</option>
+          </select>
+        </label>
+        <label style="margin-left: 12px;">Year range:
+          <input id="evoYearMin" type="number" min="1990" max="2024" value="1995" style="width:6rem;" />
+          –
+          <input id="evoYearMax" type="number" min="1990" max="2024" value="2024" style="width:6rem;" />
+        </label>
+      </div>
+      <div class="grid-two">
+        <div class="col">
+          <h3>Trajectory on Trans‑EKMA space</h3>
+          <div id="evoPlot" class="placeholder">Background & trajectories will display here.</div>
+        </div>
+        <div class="col">
+          <h3>Time series (24h NOₓ & M1M1 O₃)</h3>
+          <div id="evoTime" class="placeholder">Time series will display here.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Policy Scenario Sandbox ===================== -->
+    <section id="sandbox" class="page">
+      <h2>Policy Scenario Sandbox</h2>
+      <div class="controls-row">
+        <label><input type="radio" name="sbSource" value="site" checked /> From site & year</label>
+        <label><input type="radio" name="sbSource" value="manual" /> Manual (24h NOₓ, M1M1 O₃)</label>
+      </div>
+
+      <div id="sbSiteYear" class="controls-row">
+        <label>Site:
+          <select id="sbSiteSelect">
+            <option value="HK_AVE">HK S.A.R.</option>
+            <option value="CAUSEWAY_BAY">Causeway Bay</option>
+            <option value="CENTRAL">Central</option>
+            <option value="CENTRAL_WESTERN">Central Western</option>
+            <option value="KWAI_CHUNG">Kwai Chung</option>
+            <option value="KWUN_TONG">Kwun Tong</option>
+            <option value="MONG_KOK">Mong Kok</option>
+            <option value="NORTH">North</option>
+            <option value="SHAM_SHUI_PO">Sham Shui Po</option>
+            <option value="SHATIN">Shatin</option>
+            <option value="SOUTHERN">Southern</option>
+            <option value="TAI_PO">Tai Po</option>
+            <option value="TAP_MUN">Tap Mun</option>
+            <option value="TSEUNG_KWAN_O">Tseung Kwan O</option>
+            <option value="TSUEN_WAN">Tsuen Wan</option>
+            <option value="TUEN_MUN">Tuen Mun</option>
+            <option value="TUNG_CHUNG">Tung Chung</option>
+            <option value="YUEN_LONG">Yuen Long</option>
+          </select>
+        </label>
+        <label style="margin-left: 12px;">Year:
+          <input id="sbYearRange" type="range" min="1990" max="2024" value="2024" />
+          <span id="sbYearVal">2024</span>
+        </label>
+      </div>
+
+      <div id="sbManual" class="controls-row" style="display:none;">
+        <label>24h NOₓ:
+          <input id="sbNOxInput" type="number" step="0.01" placeholder="e.g., 60" />
+        </label>
+        <label>M1M1 O₃:
+          <input id="sbO3Input" type="number" step="0.01" placeholder="e.g., 30" />
+        </label>
+      </div>
+
+      <div class="controls-row">
+        <label>VOC factor</label>
+<input
+  id="vocFactorInput"
+  type="number"
+  value="1.0"
+  step="0.05"
+  style="width: 80px;"
+>
+
+<label>NOx factor</label>
+<input
+  id="noxFactorInput"
+  type="number"
+  value="1.0"
+  step="0.05"
+  style="width: 80px;"
+>
+      </div>
+
+      <div id="sandboxPlot" class="placeholder">Sandbox background & points will display here.</div>
+    </section>
+
+    <!-- ===================== Method & Data ===================== -->
+    <section id="method" class="page">
+      <h2>Method & Data</h2>
+      <p>
+        Background curves are drawn once from TEKMA.csv; points from sites.csv.
+        The Evolution page shows historical trajectories and time series.
+        The Sandbox estimates VOC/NOₓ at the input point (8‑level grid refinement) and predicts target 24NOₓ & M1M1 O₃
+        via bilinear interpolation after applying VOC/NOₓ factors.
+      </p>
+    </section>
+  </main>
+
+  <!-- Global libraries for plotting & CSV parsing -->
+  <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <!-- Background & data modules -->
+  <script src="tekma.js"></script>
+  <script src="sites.js"></script>
+
+  <!-- Algorithm core (ESM) & bridge -->
+  <script type="module" src="alg/locator1-bridge.js"></script>
+  <script type="module" src="alg/locator2-bridge.js"></script>
+
+  <!-- Main page logic -->
+  <script src="script.js"></script>
 </body>
 </html>
