@@ -1,12 +1,9 @@
-<!--  (c) 2026 GUO Jia. All rights reserved.
-  Proprietary and confidential. Unauthorized copying, modification, distribution is strictly prohibited.-->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trans-EKMA Hong Kong — Diagnostic, Evolution & Policy Sandbox</title>
+  <title>Trans‑EKMA Hong Kong — Diagnostic, Evolution & Policy Sandbox</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -16,14 +13,13 @@
   </header>
 
   <nav>
-    <button onclick="showPage('diagram')">Trans‑EKMA Diagram</button>
-    <button onclick="showPage('evolution')">Site Evolution</button>
-    <button onclick="showPage('sandbox')">Policy Sandbox</button>
-    <button onclick="showPage('method')">Method</button>
+    <button onclick="reloadTo('diagram')">Trans‑EKMA Diagram</button>
+    <button onclick="reloadTo('evolution')">Site Evolution</button>
+    <button onclick="reloadTo('sandbox')">Policy Sandbox</button>
+    <button onclick="reloadTo('method')">Method</button>
   </nav>
 
   <main>
-    <!-- ===================== Trans‑EKMA Diagnostic Diagram ===================== -->
     <section id="diagram" class="page active">
       <h2>Trans‑EKMA Diagnostic Diagram</h2>
       <div class="controls-row">
@@ -54,10 +50,9 @@
           <span id="yearVal">2020</span>
         </label>
       </div>
-      <div id="plot" class="placeholder">Trans‑EKMA background & selected sites will display here.</div>
+      <div id="plot" class="placeholder">Trans‑EKMA background &amp; Selected Sites</div>
     </section>
 
-    <!-- ===================== Site Evolution ===================== -->
     <section id="evolution" class="page">
       <h2>Site Evolution Analysis</h2>
       <div class="controls-row">
@@ -92,20 +87,19 @@
       <div class="grid-two">
         <div class="col">
           <h3>Trajectory on Trans‑EKMA space</h3>
-          <div id="evoPlot" class="placeholder">Background & trajectories will display here.</div>
+          <div id="evoPlot" class="placeholder">Background &amp; trajectories </div>
         </div>
         <div class="col">
-          <h3>Time series (24h NOₓ & M1M1 O₃)</h3>
-          <div id="evoTime" class="placeholder">Time series will display here.</div>
+          <h3>Time series (24h NOₓ &amp; M1M1 O₃)</h3>
+          <div id="evoTime" class="placeholder">Time series </div>
         </div>
       </div>
     </section>
 
-    <!-- ===================== Policy Scenario Sandbox ===================== -->
     <section id="sandbox" class="page">
       <h2>Policy Scenario Sandbox</h2>
       <div class="controls-row">
-        <label><input type="radio" name="sbSource" value="site" checked /> From site & year</label>
+        <label><input type="radio" name="sbSource" value="site" checked /> From site &amp; year</label>
         <label><input type="radio" name="sbSource" value="manual" /> Manual (24h NOₓ, M1M1 O₃)</label>
       </div>
 
@@ -149,52 +143,26 @@
 
       <div class="controls-row">
         <label>VOC factor</label>
-<input
-  id="vocFactorInput"
-  type="number"
-  value="1.0"
-  step="0.05"
-  style="width: 80px;"
->
-
-<label>NOx factor</label>
-<input
-  id="noxFactorInput"
-  type="number"
-  value="1.0"
-  step="0.05"
-  style="width: 80px;"
->
+        <input id="vocFactorInput" type="number" value="1.0" step="0.05" style="width: 80px;">
+        <label>NOx factor</label>
+        <input id="noxFactorInput" type="number" value="1.0" step="0.05" style="width: 80px;">
       </div>
 
-      <div id="sandboxPlot" class="placeholder">Sandbox background & points will display here.</div>
+      <div id="sandboxPlot" class="placeholder">Sandbox background &amp; points </div>
     </section>
 
-    <!-- ===================== Method & Data ===================== -->
     <section id="method" class="page">
       <h2>Method & Data</h2>
-      <p>
-        Background curves are drawn once from TEKMA.csv; points from sites.csv.
-        The Evolution page shows historical trajectories and time series.
-        The Sandbox estimates VOC/NOₓ at the input point (8‑level grid refinement) and predicts target 24NOₓ & M1M1 O₃
-        via bilinear interpolation after applying VOC/NOₓ factors.
-      </p>
+      <p>Background curves are drawn once from TEKMA.csv; points from sites.csv. The Evolution page shows historical trajectories and time series. The Sandbox estimates VOC/NOₓ at the input point and predicts target 24NOₓ & M1M1 O₃ after applying VOC/NOₓ factors.</p>
     </section>
   </main>
 
-  <!-- Global libraries for plotting & CSV parsing -->
   <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-
-  <!-- Background & data modules -->
   <script src="tekma.js"></script>
   <script src="sites.js"></script>
-
-  <!-- Algorithm core (ESM) & bridge -->
   <script type="module" src="alg/locator1-bridge.js"></script>
   <script type="module" src="alg/locator2-bridge.js"></script>
-
-  <!-- Main page logic -->
   <script src="script.js"></script>
 </body>
 </html>
