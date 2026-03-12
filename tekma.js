@@ -1,3 +1,4 @@
+
 // tekma.js — Modular TEKMA background rendering (lines only, hover shows "Emi_VOC: **, Emi_NOx: **")
 window.TEKMA = (() => {
   let bgCache = null; // { traces: [...], layoutBase: {...} }
@@ -10,7 +11,6 @@ window.TEKMA = (() => {
       clean.push({ VOC: voc, NOX: nox, X: x, Y: y });
     }
     if (!clean.length) return { traces: [] };
-
     // group by VOC, by NOX
     const byVOC = new Map();
     const byNOX = new Map();
@@ -20,7 +20,6 @@ window.TEKMA = (() => {
       if (!byNOX.has(r.NOX)) byNOX.set(r.NOX, []);
       byNOX.get(r.NOX).push({ VOC: r.VOC, X: r.X, Y: r.Y });
     }
-
     // color map by VOC (blue->red)
     const vocValues = Array.from(byVOC.keys()).sort((a,b)=>a-b);
     const vocMin = vocValues[0], vocMax = vocValues[vocValues.length - 1];
@@ -29,7 +28,6 @@ window.TEKMA = (() => {
       const hue = 240 - 240 * t; // blue->red
       return `hsl(${Math.round(hue)}, 70%, 50%)`;
     };
-
     // VOC isopleths
     const vocTraces = vocValues.map(voc => {
       const arr = byVOC.get(voc).sort((a,b)=>a.NOX - b.NOX);
@@ -38,7 +36,7 @@ window.TEKMA = (() => {
         y: arr.map(p => p.Y),
         type: 'scatter',
         mode: 'lines',
-        name: `VOC EMI = ${voc}`,        // <-- renamed per request
+        name: `VOC EMI = ${voc}`,
         line: { color: colorForVOC(voc), width: 1.2 },
         legendgroup: 'VOC',
         showlegend: true,
@@ -46,7 +44,6 @@ window.TEKMA = (() => {
         hovertemplate: 'Emi_VOC: %{customdata[0]}, Emi_NOx: %{customdata[1]}<extra></extra>',
       };
     });
-
     // NOX isopleths
     const noxValues = Array.from(byNOX.keys()).sort((a,b)=>a-b);
     const noxTraces = noxValues.map(nox => {
@@ -64,7 +61,6 @@ window.TEKMA = (() => {
         hovertemplate: 'Emi_VOC: %{customdata[0]}, Emi_NOx: %{customdata[1]}<extra></extra>',
       };
     });
-
     return { traces: [...noxTraces, ...vocTraces] };
   }
 
@@ -81,15 +77,14 @@ window.TEKMA = (() => {
           bgCache = {
             traces: parsed.traces,
             layoutBase: {
-              xaxis: { title: '24-hour NOx (ppb)', zeroline: false, rangemode: 'tozero' },
-              yaxis: { title: 'Daily range of hourly O₃ (max–min, ppb)', zeroline: false, rangemode: 'tozero' },
+              xaxis: { title: {text: '24-hour NOx (ppb)'}, zeroline: false, rangemode: 'tozero' },
+              yaxis: { title: {text: 'Daily range of hourly O₃ (max–min, ppb)'}, zeroline: false, rangemode: 'tozero' },
               plot_bgcolor: '#fafafa',
               legend: { orientation: 'v', x: 1.02, y: 0.5 },
               margin: { l: 60, r: 160, t: 40, b: 60 },
               hovermode: 'closest',
             }
           };
-          console.log('[TEKMA] Background traces ready:', bgCache.traces.length);
           resolve(bgCache);
         },
         error: (e) => { console.error('[TEKMA] CSV parse error:', e); reject(e); }
@@ -97,10 +92,18 @@ window.TEKMA = (() => {
     });
   }
 
+  // IMPORTANT: don't overwrite layout (axis titles) when a plot already exists
   async function renderBackground(containerId, layoutOverrides = {}) {
     const div = document.getElementById(containerId);
     if (!div) return;
     const bg = await ensureBackground();
+
+    if (div._fullLayout && Array.isArray(div.data)) {
+      // Plot already present — add traces only to avoid clobbering titles
+      return Plotly.addTraces(div, bg.traces);
+    }
+
+    // First render — keep long-form titles for initial pages such as Diagram
     const layout = { ...bg.layoutBase, ...layoutOverrides };
     return Plotly.react(div, bg.traces, layout);
   }

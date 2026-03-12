@@ -1,0 +1,37 @@
+
+/* style.mobile.css — mobile-specific refinements (additive) */
+
+/* Phone & small tablet */
+@media (max-width: 768px) {
+  /* Tighter paddings for header/nav to save vertical space */
+  header { padding: 18px 20px; }
+  nav { padding: 12px 20px; }
+  nav button { padding: 10px 12px; margin-right: 8px; }
+  main { padding: 0 20px 20px 20px; }
+
+  /* Section breathing but slimmer than desktop */
+  .page { margin: 26px 0; padding: 26px; }
+
+  /* Plot default height on phones (A 档上限) — autoAdjustPlotHeight 若存在会覆盖此值 */
+  #plot, #evoPlot, #evoTime, #sandboxPlot {
+    height: 44dvh;
+    height: 44vh;   /* fallback */
+    min-height: 300px;
+  }
+
+  /* Friendlier selects */
+  #siteSelect, #evoSiteSelect { width: 100%; min-height: 200px; }
+
+  /* Touch-friendly controls; avoid iOS zoom on focus */
+  input, select, button { font-size: 16px; }
+  input[type="range"] { width: 100%; }
+}
+
+/* Very small phones */
+@media (max-width: 360px) {
+  #plot, #evoPlot, #evoTime, #sandboxPlot {
+    height: 40dvh;
+    height: 40vh;  /* fallback */
+    min-height: 280px;
+  }
+}

@@ -1,49 +1,52 @@
 
+/* === Base layout (medium typography + breathing space B) === */
+html, body { height: 100%; }
 body {
-  font-family: Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  line-height: 1.55;
   margin: 0;
   background: #f4f6f8;
-}
-
-header {
-  background: #003366;
-  color: white;
-  padding: 20px;
-}
-
-nav {
-  background: #e0e0e0;
-  padding: 10px;
-}
-
-nav button {
-  margin-right: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-main {
-  padding: 20px;
-}
-.page { display: none; }
-.page.active { display: block; }
-
-.placeholder {
-  margin: 20px 0;
-  padding: 40px;
-  background: white;
-  border: 2px dashed #999;
-  text-align: center;
-  color: #666;
-}
-/* 控件行布局（通用） */
-.controls-row {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
 }
-/* Evolution 两列布局 */
-.grid-two { display: flex; gap: 20px; flex-wrap: wrap; }
-.col { flex: 1 1 480px; }
-#plot, #evoPlot, #evoTime, #sandboxPlot { min-height: 420px; }
+header { background: #003366; color: white; padding: 22px 32px; }
+header h1 { margin: 0 0 6px 0; font-size: 28px; }
+header p { margin: 0; font-size: 17px; }
+nav { background: #e0e0e0; padding: 12px 32px; }
+nav button { margin-right: 10px; padding: 10px 14px; cursor: pointer; font-size: 16px; }
+main { padding: 0 32px 32px 32px; flex: 1 1 auto; min-height: 0; }
+
+.page { display: none; margin: 32px 0; padding: 32px; }
+.page.active { display: block; }
+.placeholder { margin: 20px 0; padding: 40px; background: white; border: 2px dashed #999; text-align: center; color: #666; font-size: 16px; border-radius: 8px; }
+
+.controls-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.controls-row label { display: inline-flex; align-items: center; gap: 6px; font-size: 16px; }
+select { max-width: 100%; font-size: 16px; }
+input[type="number"], input[type="range"], input[type="text"] { font-size: 16px; }
+
+.grid-two { display: flex; gap: 24px; flex-wrap: wrap; }
+.col { flex: 1 1 520px; display: flex; flex-direction: column; min-height: 0; background:#fff; border-radius:8px; padding:16px; box-shadow:0 0 0 1px rgba(0,0,0,0.05); }
+.col h3 { font-size:20px; margin:6px 0 8px 0; }
+.col>#evoPlot, .col>#evoTime { flex:1 1 auto; min-height:320px; }
+
+/* Plot heights — A 档：桌面 48dvh；手机 44dvh；小屏 40dvh */
+#plot, #evoPlot, #evoTime, #sandboxPlot {
+  min-height: 320px;
+  height: 48dvh;
+  height: 48vh;
+}
+
+@media (max-width: 768px) {
+  body { font-size: 17px; }
+  header { padding:18px 24px; }
+  nav { padding:12px 24px; }
+  main { padding:0 24px 24px 24px; }
+  .page{ margin:26px 0; padding:26px; }
+  #plot,#evoPlot,#evoTime,#sandboxPlot{ height:44dvh; height:44vh; }
+  #siteSelect,#evoSiteSelect{ min-height:200px; }
+}
+@media (max-width:360px){
+  #plot,#evoPlot,#evoTime,#sandboxPlot{ height:40dvh; height:40vh; }
+}

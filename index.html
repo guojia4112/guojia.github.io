@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trans‑EKMA Hong Kong — Diagnostic, Evolution & Policy Sandbox</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Mobile-specific additive styles -->
+  <link rel="stylesheet" href="style.mobile.css" />
 </head>
 <body>
   <header>
@@ -152,8 +154,8 @@
     </section>
 
     <section id="method" class="page">
-      <h2>Method & Data</h2>
-      <p>Background curves are drawn once from TEKMA.csv; points from sites.csv. The Evolution page shows historical trajectories and time series. The Sandbox estimates VOC/NOₓ at the input point and predicts target 24NOₓ & M1M1 O₃ after applying VOC/NOₓ factors.</p>
+      <h2>Method &amp; Data</h2>
+      <p>Background curves are drawn once from TEKMA.csv; points from sites.csv. The Evolution page shows historical trajectories and time series. The Sandbox estimates VOC/NOₓ at the input point and predicts target 24NOₓ &amp; M1M1 O₃ after applying VOC/NOₓ factors.</p>
     </section>
   </main>
 
@@ -164,5 +166,7 @@
   <script type="module" src="alg/locator1-bridge.js"></script>
   <script type="module" src="alg/locator2-bridge.js"></script>
   <script src="script.js"></script>
+  <!-- Mobile-specific additive behavior -->
+  <script src="script.mobile.js"></script>
 </body>
 </html>
