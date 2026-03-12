@@ -153,10 +153,52 @@
       <div id="sandboxPlot" class="placeholder">Sandbox background &amp; points </div>
     </section>
 
-    <section id="method" class="page">
-      <h2>Method &amp; Data</h2>
-      <p>Background curves are drawn once from TEKMA.csv; points from sites.csv. The Evolution page shows historical trajectories and time series. The Sandbox estimates VOC/NOₓ at the input point and predicts target 24NOₓ &amp; M1M1 O₃ after applying VOC/NOₓ factors.</p>
-    </section>
+
+
+<section id="method" class="page" style="font-size: 1.1rem; line-height: 1.55;">
+  <h2>Method & Data</h2><br>
+
+  <h3>Trans‑EKMA Framework</h3>
+  <p>
+    Trans‑EKMA uses a photochemical box model to simulate ozone formation under 
+    combinations of VOC and NOx emissions. These simulations generate background VOC and
+    NOx isopleths, forming a modeled NOx-O₃ diagnostic space. Routine observations of NOx
+    and the daily ozone amplitude are then placed onto this diagram to
+    determine whether ozone formation is NOx‑limited or VOC‑limited, and to visualize how
+    precursor conditions may have shifted over time.<br><br>
+  </p>
+
+  <h3>Hong Kong Implementation & Tools</h3>
+  <p>
+    This Hong Kong version applies the Trans‑EKMA framework using local meteorology
+    (pressure, temperature, humidity, boundary‑layer height) and regional VOC reactivity
+    profiles. Station‑year observations are overlaid to show regimes and long‑term trends.<br>
+  </p>
+
+  <ul style="margin-left: 1rem;">
+    <li><strong>Diagram</strong> — Select site(s) and year to place points on the background and read the current regime.</li>
+    <li><strong>Evolution</strong> — View multi‑year trajectories, including leftward NOx‑reduction signals and crossings of VOC isolines.</li>
+    <li><strong>Sandbox</strong> — Apply VOC/NOx factors to explore “what‑if” scenarios and see how ozone formation may shift.</li><br>
+  </ul>
+
+  <h3>Developers & Citation</h3>
+  <p>
+    Developed by the Environmental Research Team at the Hong Kong University of Science and Technology (HKUST).<br>    
+      </p>
+<p>
+  <strong>Team page:</strong><br>	
+  <a href="https://envrwangz.people.ust.hk/" target="_blank">https://envrwangz.people.ust.hk/</a>
+</p>
+
+<p>
+  <strong>Reference:</strong><br>	
+  <a href="https://pubs.acs.org/doi/full/10.1021/acs.est.2c08205" target="_blank">Guo, J. et al. (2023). <em>Evolution of Ozone Pollution in China: What Track Will It Follow?</em> Environmental Science & Technology, 57, 109–117.</a><br>
+</p>
+
+</section>
+
+
+
   </main>
 
   <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
