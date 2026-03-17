@@ -50,3 +50,19 @@ input[type="number"], input[type="range"], input[type="text"] { font-size: 16px;
 @media (max-width:360px){
   #plot,#evoPlot,#evoTime,#sandboxPlot{ height:40dvh; height:40vh; }
 }
+
+#clustrmaps-container {
+  width: 180px;        /* 想多小就多小，例如 150–200px */
+  height: 180px;
+  margin: 30px auto;   /* 居中 */
+  overflow: hidden;    /* 防止地图溢出 */
+  position: relative;
+}
+
+#clustrmaps-container > div,
+#clustrmaps-container iframe {
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(1); /* 如果地图内容太大，可改为 scale(0.8) 或更小 */
+  transform-origin: top left;
+}
